@@ -8,8 +8,7 @@ const OrderHistoryPage = () => {
     const fetchOrders = () => {
       try {
         const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
-        // Sort orders by ID, newest first (descending order)
-        savedOrders.sort((a, b) => b.id - a.id);
+        savedOrders.sort((a, b) => b.id - a.id); // Newest first
         setOrderHistory(savedOrders);
       } catch (error) {
         console.error('Failed to load orders from localStorage:', error);
@@ -20,7 +19,6 @@ const OrderHistoryPage = () => {
     fetchOrders();
   }, []);
 
-  // Function to calculate the total if not provided
   const calculateTotal = (items) => {
     return items.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 0), 0);
   };
@@ -34,34 +32,22 @@ const OrderHistoryPage = () => {
           {orderHistory.length === 0 ? (
             <p>No past orders found.</p>
           ) : (
-            <ul className="list-disc pl-5">
+            <ul className="space-y-4">
               {orderHistory.map((order) => (
-                <li key={order.id} className="mb-4">
-                  <div>
-                    <p><strong>Order ID:</strong> {order.id || 'N/A'}</p>
-                    <p><strong>Customer Name:</strong> {order.customerName || 'N/A'}</p>
-                    <p><strong>Address:</strong> {order.address || 'N/A'}</p>
-                    <p><strong>Pickup Time:</strong> {order.pickupTime ? new Date(order.pickupTime).toLocaleString() : 'N/A'}</p>
-                    <p><strong>Status:</strong> {order.status || 'Pending'}</p>
-                    {order.status === 'Cancelled' && order.cancelReason && (
-                      <p><strong>Cancellation Reason:</strong> {order.cancelReason}</p>
-                    )}
-                    <p><strong>Total:</strong> ${order.total ? order.total.toFixed(2) : calculateTotal(order.items).toFixed(2)}</p>
-                    <div>
-                      <strong>Items:</strong>
-                      <ul className="list-disc pl-5">
-                        {order.items && order.items.length > 0 ? (
-                          order.items.map((item, index) => (
-                            <li key={index}>
-                              {item.name || 'Unknown Item'} x {item.quantity || 0} @ ${item.price ? item.price.toFixed(2) : '0.00'} each
-                            </li>
-                          ))
-                        ) : (
-                          <li>No items</li>
-                        )}
-                      </ul>
-                    </div>
-                  </div>
+                <li key={order.id} className="border p-4 rounded shadow-sm">
+                  <p><strong>Order ID:</strong> {order.id}</p>
+                  <p><strong>Name:</strong> {order.customerName || 'N/A'}</p>
+                  <p><strong>Email:</strong> {order.customerEmail || 'N/A'}</p>
+                  <p><strong>Phone:</strong> {order.phone || 'N/A'}</p>
+                  <p><strong>Address:</strong> {order.address || 'N/A'}</p>
+                  <p><strong>Pickup Date:</strong> {order.pickupTime || 'N/A'}</p>
+                  <p><strong>Status:</strong> {order.status || 'Pending'}</p>
+                  <p>
+                    <strong>Total:</strong> Rs{' '}
+                    {order.total
+                      ? parseFloat(order.total).toFixed(2)
+                      : calculateTotal(order.items).toFixed(2)}
+                  </p>
                 </li>
               ))}
             </ul>

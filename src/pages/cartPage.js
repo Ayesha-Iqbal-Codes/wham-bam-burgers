@@ -3,17 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import { useCart } from '../context/cartContext';
 import { useUser } from '../context/userContext';
-import { toast, ToastContainer } from 'react-toastify';  // Correct import
-import 'react-toastify/dist/ReactToastify.css';  // Import Toastify CSS
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 const CartPage = () => {
   const { cartItems, removeFromCart, clearCart, getTotal, placeOrder, updateQuantity } = useCart();
   const { user } = useUser();
   const navigate = useNavigate();
 
+
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [pickupDate, setPickupDate] = useState('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const total = getTotal();
 
@@ -21,75 +25,75 @@ const CartPage = () => {
     const savedAddress = localStorage.getItem('address');
     const savedPhone = localStorage.getItem('phone');
     const savedPickupDate = localStorage.getItem('pickupDate');
-    
+
     if (savedAddress) setAddress(savedAddress);
     if (savedPhone) setPhone(savedPhone);
-    if (savedPickupDate) setPickupDate(savedPickupDate);
-    
-    // Set today's date automatically (without time)
-    const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
-    setPickupDate(currentDate);
+    if (savedPickupDate) {
+      setPickupDate(savedPickupDate);
+    } else {
+      const currentDate = new Date().toISOString().split('T')[0];
+      setPickupDate(currentDate);
+    }
   }, []);
 
   const handleCheckout = () => {
     if (!user) {
-      // Show the error toast first
       toast.error("Please log in to checkout.");
-      
-      // Delay the navigation to login so the toast can be shown
       setTimeout(() => {
-        navigate("/login");  // Redirect to login page after the toast
-      }, 1000); // 1 second delay
-  
-      return;  // Exit the function early to prevent further checkout steps
+        navigate("/login");
+      }, 1000);
+      return;
     }
-  
-    // Continue with the rest of the checkout process...
+
     if (address && phone && pickupDate) {
       let lastOrderId = parseInt(localStorage.getItem('lastOrderId'), 10) || 0;
       const newOrderId = lastOrderId + 1;
-  
+
       const order = {
         id: newOrderId,
         customerName: user.name,
         customerEmail: user.email,
         phone,
         address,
-        pickupDate,
+        pickupTime: pickupDate,
         items: cartItems,
         status: 'Pending',
       };
-  
+
       const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
       const filteredOrders = savedOrders.filter(existingOrder => existingOrder.id !== order.id);
       filteredOrders.push(order);
+
       localStorage.setItem('orders', JSON.stringify(filteredOrders));
       localStorage.setItem('lastOrderId', newOrderId);
-  
       localStorage.setItem('address', address);
       localStorage.setItem('phone', phone);
       localStorage.setItem('pickupDate', pickupDate);
-  
+
       placeOrder(user.name, address, phone, pickupDate);
-  
+
+      // Soft reset the form
       setAddress('');
       setPhone('');
-      setPickupDate('');
+      const today = new Date().toISOString().split('T')[0];
+      setPickupDate(today);
+
       localStorage.removeItem('address');
       localStorage.removeItem('phone');
       localStorage.removeItem('pickupDate');
-  
+
       clearCart();
-  
+
+      // Show confirmation toast
       toast.success("Order placed successfully! Check the order history to know your order status.");
+      setShowConfirmation(true);
+      setTimeout(() => setShowConfirmation(false), 4000);
     } else {
       toast.error("Please fill in all details to place the order.");
     }
   };
-  
 
   const handleQuantityChange = (itemId, change) => {
-    console.log(`Changing quantity for itemId: ${itemId} by ${change}`);
     if (change === 'increase') {
       updateQuantity(itemId, 1);
     } else if (change === 'decrease') {
@@ -112,7 +116,9 @@ const CartPage = () => {
                   <li key={item.id} className="border-b py-2 flex justify-between items-center">
                     <div className="flex flex-col">
                       <span>{item.name} - Rs {item.price.toFixed(2)} x {item.quantity}</span>
-                      <span className="text-sm text-gray-600">Total: Rs {((item.price * item.quantity)).toFixed(2)}</span>
+                      <span className="text-sm text-gray-600">
+                        Total: Rs {(item.price * item.quantity).toFixed(2)}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <button
@@ -181,13 +187,16 @@ const CartPage = () => {
                     Clear Cart
                   </button>
                 </div>
+                {showConfirmation && (
+                  <p className="text-green-600 font-semibold mt-4">
+                    ✅ Your order has been placed successfully!
+                  </p>
+                )}
               </div>
             </div>
           )}
         </div>
       </div>
-
-      {/* Corrected ToastContainer usage */}
       <ToastContainer />
     </div>
   );

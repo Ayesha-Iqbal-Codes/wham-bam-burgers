@@ -124,7 +124,7 @@ const ManageMenu = () => {
 
         {/* Category Tabs */}
         <div className="mb-4">
-          <div className="flex space-x-4">
+          <div className="flex flex-wrap justify-start space-x-4">
             {categories.map(category => (
               <button
                 key={category}
@@ -149,7 +149,7 @@ const ManageMenu = () => {
           (selectedCategory === '' || selectedCategory === category) && (
             <div key={category} className="mb-8">
               <h2 className="text-3xl font-bold mb-4">{category}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {menuItems.filter(item => item.category === category).map(item => (
                   <div key={item.id} className="bg-white p-4 rounded-lg shadow-md">
                     {item.image && (

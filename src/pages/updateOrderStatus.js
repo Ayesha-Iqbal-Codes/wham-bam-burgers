@@ -12,7 +12,7 @@ const UpdateOrderStatus = () => {
 
   const handleOrderSelect = (order) => {
     setSelectedOrder(order);
-    setStatus(order.status || ''); // Ensure status is set correctly
+    setStatus(order.status || '');
   };
 
   const handleStatusChange = (e) => {
@@ -26,17 +26,20 @@ const UpdateOrderStatus = () => {
         order.id === selectedOrder.id ? { ...order, status } : order
       );
       setOrders(updatedOrders);
-      localStorage.setItem('orders', JSON.stringify(updatedOrders)); // Save updated status
+      localStorage.setItem('orders', JSON.stringify(updatedOrders));
       setSelectedOrder(null);
+      setStatus('');
     }
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6">Update Order Status</h2>
-      
-      <div>
-        <label htmlFor="order-select" className="block text-gray-700 text-sm font-bold mb-2">
+    <div className="px-4 py-6 max-w-3xl mx-auto">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center sm:text-left">
+        Update Order Status
+      </h2>
+
+      <div className="mb-6">
+        <label htmlFor="order-select" className="block text-sm font-medium text-gray-700 mb-2">
           Select Order
         </label>
         <select
@@ -44,10 +47,10 @@ const UpdateOrderStatus = () => {
           value={selectedOrder ? selectedOrder.id : ''}
           onChange={(e) => {
             const orderId = parseInt(e.target.value, 10);
-            const order = orders.find((order) => order.id === orderId);
+            const order = orders.find((o) => o.id === orderId);
             handleOrderSelect(order);
           }}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="w-full rounded border border-gray-300 p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
         >
           <option value="">-- Select an Order --</option>
           {orders.map((order) => (
@@ -57,24 +60,27 @@ const UpdateOrderStatus = () => {
           ))}
         </select>
       </div>
-      
+
       {selectedOrder && (
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold mb-4">Order Details</h3>
-          <p><strong>Order ID:</strong> {selectedOrder.id}</p>
-          <p><strong>Customer Name:</strong> {selectedOrder.customerName}</p>
-          <p><strong>Current Status:</strong> {selectedOrder.status}</p>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="status" className="block text-gray-700 text-sm font-bold mb-2">
+        <div className="bg-white p-4 rounded shadow-md">
+          <h3 className="text-xl font-semibold mb-4 text-center sm:text-left">Order Details</h3>
+          <div className="space-y-1 text-sm text-gray-800 mb-4">
+            <p><strong>Order ID:</strong> {selectedOrder.id}</p>
+            <p><strong>Customer Name:</strong> {selectedOrder.customerName}</p>
+            <p><strong>Current Status:</strong> {selectedOrder.status}</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
                 Update Status
               </label>
               <select
                 id="status"
                 value={status}
                 onChange={handleStatusChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
+                className="w-full rounded border border-gray-300 p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
               >
                 <option value="Preparing">Preparing</option>
                 <option value="Cooking">Cooking</option>
@@ -85,7 +91,7 @@ const UpdateOrderStatus = () => {
             </div>
             <button
               type="submit"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow transition"
             >
               Update Status
             </button>

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
 const formatDate = (dateString) => {
-  const options = { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric', 
-    hour: 'numeric', 
-    minute: 'numeric', 
-    hour12: true
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
   };
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
@@ -19,39 +19,30 @@ const OrdersManagement = () => {
   const [cancelReason, setCancelReason] = useState('');
 
   useEffect(() => {
-    // Retrieve and clean up orders from local storage
     const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
-
-    // Filter out orders without address or pickup time
     const validOrders = savedOrders.filter(order => order.address && order.pickupTime);
-
-    // Save only valid orders back to local storage
     localStorage.setItem('orders', JSON.stringify(validOrders));
     setOrders(validOrders);
   }, []);
 
   const handleOrderClick = (order) => {
-    console.log('Selected Order:', order); // Debugging line to check selected order
     setSelectedOrder(order);
-    setShowCancelReason(false); // Hide cancel reason input when a new order is selected
+    setShowCancelReason(false);
   };
 
   const handleStatusChange = (status) => {
     if (selectedOrder) {
-      // Update the status of the selected order
       const updatedOrders = orders.map(order =>
         order.id === selectedOrder.id ? { ...order, status } : order
       );
-
-      // Update the state and local storage
-      setOrders(updatedOrders);
       localStorage.setItem('orders', JSON.stringify(updatedOrders));
+      setOrders(updatedOrders);
       setSelectedOrder(null);
     }
   };
 
   const handleCancelOrder = () => {
-    setShowCancelReason(true); // Show the cancel reason input box
+    setShowCancelReason(true);
   };
 
   const handleSubmitCancellation = () => {
@@ -59,38 +50,36 @@ const OrdersManagement = () => {
       const updatedOrders = orders.map(order =>
         order.id === selectedOrder.id ? { ...order, status: 'Cancelled', cancelReason } : order
       );
-
-      // Move the order to the completed list
       localStorage.setItem('orders', JSON.stringify(updatedOrders));
       setOrders(updatedOrders);
       setSelectedOrder(null);
       setCancelReason('');
-      setShowCancelReason(false); // Hide the cancel reason input box
+      setShowCancelReason(false);
     } else {
       alert('Please provide a reason for cancellation.');
     }
   };
 
-  // Separate orders based on status
   const activeOrders = orders.filter(order => order.status !== 'Completed' && order.status !== 'Cancelled');
   const completedOrders = orders.filter(order => order.status === 'Completed' || order.status === 'Cancelled');
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6">Manage Orders</h2>
-      <div className="flex space-x-6">
-        {/* Active Orders Column */}
-        <div className="w-1/2 bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Active Orders</h3>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h2 className="text-4xl font-bold mb-6 text-[#2C1A15]">Manage Orders</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Active Orders */}
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <h3 className="text-2xl font-semibold mb-4 text-[#2C1A15]">Active Orders</h3>
           {activeOrders.length === 0 ? (
-            <p>No active orders available.</p>
+            <p className="text-gray-600">No active orders available.</p>
           ) : (
-            <ul className="list-disc pl-5">
-              {activeOrders.map((order) => (
-                <li key={order.id} className="mb-2">
+            <ul className="space-y-2">
+              {activeOrders.map(order => (
+                <li key={order.id}>
                   <button
                     onClick={() => handleOrderClick(order)}
-                    className="text-blue-500 hover:underline"
+                    className="text-[#9c6644] hover:underline font-medium"
                   >
                     Order #{order.id} - {order.customerName}
                   </button>
@@ -100,24 +89,24 @@ const OrdersManagement = () => {
           )}
         </div>
 
-        {/* Completed Orders Column */}
-        <div className="w-1/2 bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Completed Orders</h3>
+        {/* Completed Orders */}
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <h3 className="text-2xl font-semibold mb-4 text-[#2C1A15]">Completed/Cancelled Orders</h3>
           {completedOrders.length === 0 ? (
-            <p>No completed orders available.</p>
+            <p className="text-gray-600">No completed/cancelled orders available.</p>
           ) : (
-            <ul className="list-disc pl-5">
-              {completedOrders.map((order) => (
-                <li key={order.id} className="mb-4">
+            <ul className="space-y-4">
+              {completedOrders.map(order => (
+                <li key={order.id}>
                   <button
                     onClick={() => handleOrderClick(order)}
-                    className="text-blue-500 hover:underline"
+                    className="text-[#9c6644] hover:underline font-medium"
                   >
                     Order #{order.id} - {order.customerName}
                   </button>
                   <p><strong>Status:</strong> {order.status}</p>
                   {order.status === 'Cancelled' && (
-                    <p><strong>Cancellation Reason:</strong> {order.cancelReason}</p>
+                    <p><strong>Reason:</strong> {order.cancelReason}</p>
                   )}
                 </li>
               ))}
@@ -128,90 +117,95 @@ const OrdersManagement = () => {
 
       {/* Order Details */}
       {selectedOrder && (
-        <div className="w-full bg-white p-6 mt-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Order Details</h3>
+        <div className="bg-white p-6 mt-10 rounded-xl shadow-lg">
+          <h3 className="text-2xl font-bold mb-4 text-[#2C1A15]">Order Details</h3>
           <p><strong>Order ID:</strong> {selectedOrder.id}</p>
-          <p><strong>Customer Name:</strong> {selectedOrder.customerName}</p>
+          <p><strong>Name:</strong> {selectedOrder.customerName}</p>
+          <p><strong>Phone:</strong> {selectedOrder.phone}</p>
           <p><strong>Address:</strong> {selectedOrder.address}</p>
           <p><strong>Pickup Time:</strong> {formatDate(selectedOrder.pickupTime)}</p>
-          
-          {/* Table for displaying items */}
-          <table className="min-w-full bg-white mt-4 border-collapse border border-gray-300">
-            <thead>
-              <tr>
-                <th className="border px-4 py-2 text-left">Item Name</th>
-                <th className="border px-4 py-2 text-right">Quantity</th>
-                <th className="border px-4 py-2 text-right">Price (per item)</th>
-                <th className="border px-4 py-2 text-right">Total Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedOrder.items.map((item, index) => (
-                <tr key={index} className="hover:bg-gray-100">
-                  <td className="border px-4 py-2">{item.name}</td>
-                  <td className="border px-4 py-2 text-right">{item.quantity}</td>
-                  <td className="border px-4 py-2 text-right">${item.price.toFixed(2)}</td>
-                  <td className="border px-4 py-2 text-right">${(item.price * item.quantity).toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
 
-          {/* Total Order Price */}
-          <p className="mt-4 text-xl font-bold">
-            Total: ${selectedOrder.items.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2)}
+          <div className="overflow-x-auto mt-6">
+            <table className="min-w-full border border-gray-300">
+              <thead className="bg-[#f7f3ed] text-[#2C1A15]">
+                <tr>
+                  <th className="border px-4 py-2 text-left">Item</th>
+                  <th className="border px-4 py-2 text-right">Qty</th>
+                  <th className="border px-4 py-2 text-right">Price (Rs)</th>
+                  <th className="border px-4 py-2 text-right">Total (Rs)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedOrder.items.map((item, index) => (
+                  <tr key={index} className="hover:bg-gray-100">
+                    <td className="border px-4 py-2">{item.name}</td>
+                    <td className="border px-4 py-2 text-right">{item.quantity}</td>
+                    <td className="border px-4 py-2 text-right">Rs {item.price.toFixed(0)}</td>
+                    <td className="border px-4 py-2 text-right">Rs {(item.quantity * item.price).toFixed(0)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p className="mt-4 text-xl font-bold text-[#2C1A15]">
+            Total: Rs {selectedOrder.items.reduce((sum, item) => sum + item.quantity * item.price, 0).toFixed(0)}
           </p>
 
-          {/* Conditional Buttons */}
+          {/* Status Buttons */}
           {selectedOrder.status !== 'Completed' && selectedOrder.status !== 'Cancelled' && (
-            <div className="mt-6">
-              <button
-                onClick={() => handleStatusChange('Preparing')}
-                className="px-4 py-2 bg-yellow-500 hover:bg-yellow-700 text-white rounded mr-4"
-              >
-                Mark as Preparing
-              </button>
-              <button
-                onClick={() => handleStatusChange('Cooking')}
-                className="px-4 py-2 bg-orange-500 hover:bg-orange-700 text-white rounded mr-4"
-              >
-                Mark as Cooking
-              </button>
-              <button
-                onClick={() => handleStatusChange('Ready for Pickup')}
-                className="px-4 py-2 bg-green-500 hover:bg-green-700 text-white rounded mr-4"
-              >
-                Mark as Ready for Pickup
-              </button>
-              <button
-                onClick={() => handleStatusChange('Out for Delivery')}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded mr-4"
-              >
-                Mark as Out for Delivery
-              </button>
-              <button
-                onClick={() => handleStatusChange('Completed')}
-                className="px-4 py-2 bg-gray-500 hover:bg-gray-700 text-white rounded"
-              >
-                Mark as Completed
-              </button>
+            <div className="mt-6 space-y-3">
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={() => handleStatusChange('Preparing')}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+                >
+                  Preparing
+                </button>
+                <button
+                  onClick={() => handleStatusChange('Cooking')}
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded"
+                >
+                  Cooking
+                </button>
+                <button
+                  onClick={() => handleStatusChange('Ready for Pickup')}
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                >
+                  Ready for Pickup
+                </button>
+                <button
+                  onClick={() => handleStatusChange('Out for Delivery')}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                >
+                  Out for Delivery
+                </button>
+                <button
+                  onClick={() => handleStatusChange('Completed')}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
+                >
+                  Completed
+                </button>
+              </div>
+
               <button
                 onClick={handleCancelOrder}
-                className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded mt-4"
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded mt-2"
               >
                 Cancel Order
               </button>
+
               {showCancelReason && (
                 <div className="mt-4">
                   <textarea
                     value={cancelReason}
                     onChange={(e) => setCancelReason(e.target.value)}
-                    placeholder="Reason for cancellation"
-                    className="border p-2 rounded w-full"
+                    placeholder="Enter reason for cancellation..."
+                    className="w-full border p-2 rounded"
                   />
                   <button
                     onClick={handleSubmitCancellation}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-800 text-white rounded mt-2"
+                    className="bg-red-600 hover:bg-red-800 text-white px-4 py-2 rounded mt-2"
                   >
                     Submit Cancellation
                   </button>

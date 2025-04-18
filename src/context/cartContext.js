@@ -53,12 +53,15 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  // New function to place the order
-  const placeOrder = (customerName) => {
+  // Updated placeOrder function to accept customer details
+  const placeOrder = (customerName, address, phone, pickupDate) => {
     const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
     const newOrder = {
       id: savedOrders.length + 1,
       customerName,
+      address,
+      phone,
+      pickupDate,
       items: cartItems,
       status: 'Pending'
     };

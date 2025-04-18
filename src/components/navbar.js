@@ -34,15 +34,15 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 bg-gradient-to-r from-black via-red-800 to-red-900 text-white shadow-md z-50">
-      <div className="container mx-auto flex justify-between items-center py-4 px-4 lg:px-8">
+      <div className="container mx-auto flex justify-between items-center py-2 px-3 sm:px-4 lg:px-6">
         {/* Logo */}
-        <Link to="/" className="flex items-center">
+        <Link to="/" className="flex items-center space-x-2">
           <img
             src={logo}
             alt="Wham Bam Burgers Logo"
-            className="w-12 h-12 rounded-full shadow-lg hover:shadow-red-400 transition duration-300"
+            className="w-10 h-10 sm:w-10 sm:h-10 rounded-full shadow-lg hover:shadow-red-400 transition duration-300"
           />
-          <h1 className="text-2xl font-bold ml-4 hover:text-yellow-300 transition duration-300">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold hover:text-yellow-300 transition duration-300">
             Wham Bam Burgers
           </h1>
         </Link>
@@ -50,7 +50,7 @@ const Navbar = () => {
         {/* Hamburger icon */}
         <div className="lg:hidden">
           <button onClick={toggleMobileMenu}>
-            <FontAwesomeIcon icon={menuOpen ? faTimes : faBars} className="w-6 h-6" />
+            <FontAwesomeIcon icon={menuOpen ? faTimes : faBars} className="w-5 h-5" />
           </button>
         </div>
 
@@ -58,15 +58,15 @@ const Navbar = () => {
         <nav
           className={`${
             menuOpen ? 'block' : 'hidden'
-          } lg:flex lg:items-center lg:space-x-4 mt-4 lg:mt-0 absolute lg:static top-full left-0 w-full lg:w-auto bg-red-900 lg:bg-transparent text-white lg:text-inherit z-40`}
+          } lg:flex lg:items-center lg:space-x-4 mt-2 lg:mt-0 absolute lg:static top-full left-0 w-full lg:w-auto bg-red-900 lg:bg-transparent text-white z-40`}
         >
-          <div className="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-4 px-4 lg:px-0 py-2 lg:py-0">
+          <div className="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-4 px-4 lg:px-0 py-2 lg:py-0 text-sm sm:text-base items-center">
             <Link
               to="/menu"
               onClick={() => setMenuOpen(false)}
               className={`hover:text-yellow-300 transition duration-300 ${
                 location.pathname === '/menu' ? 'text-yellow-300' : ''
-              }`}
+              } lg:mt-1`}
             >
               Menu
             </Link>
@@ -75,16 +75,16 @@ const Navbar = () => {
               onClick={() => setMenuOpen(false)}
               className={`hover:text-yellow-300 transition duration-300 ${
                 location.pathname === '/cart' ? 'text-yellow-300' : ''
-              }`}
+              } lg:mt-1`}
             >
-              <FontAwesomeIcon icon={faShoppingCart} className="w-6 h-6" />
+              <FontAwesomeIcon icon={faShoppingCart} className="w-5 h-5" />
             </Link>
             <Link
               to="/order-history"
               onClick={() => setMenuOpen(false)}
               className={`hover:text-yellow-300 transition duration-300 ${
                 location.pathname === '/order-history' ? 'text-yellow-300' : ''
-              }`}
+              } lg:mt-1`}
             >
               Order History
             </Link>
@@ -93,12 +93,12 @@ const Navbar = () => {
               <Link
                 to="/login"
                 onClick={() => setMenuOpen(false)}
-                className="hover:text-yellow-300 transition duration-300"
+                className="hover:text-yellow-300 transition duration-300 lg:mt-1"
               >
                 Login
               </Link>
             ) : (
-              <div className="relative">
+              <div className="relative lg:mt-0.5">
                 <div
                   className="flex items-center cursor-pointer"
                   onClick={toggleProfileDropdown}
@@ -106,13 +106,13 @@ const Navbar = () => {
                   <img
                     src={profilePic}
                     alt="User"
-                    className="w-10 h-10 rounded-full shadow-lg"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full shadow-lg"
                   />
                 </div>
 
                 {isOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-red-900 text-white rounded-md shadow-lg z-50">
-                    <div className="px-4 py-2 border-b border-gray-700 text-center font-semibold">
+                  <div className="absolute right-0 mt-2 w-44 bg-red-900 text-white rounded-md shadow-lg z-50 text-sm">
+                    <div className="px-4 py-2 border-b border-gray-700 text-center font-semibold truncate">
                       {user.name}
                     </div>
                     <button
