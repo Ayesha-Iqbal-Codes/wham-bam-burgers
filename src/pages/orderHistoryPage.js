@@ -8,8 +8,18 @@ const OrderHistoryPage = () => {
     const fetchOrders = () => {
       try {
         const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
-        savedOrders.sort((a, b) => b.id - a.id); // Newest first
-        setOrderHistory(savedOrders);
+        const loggedInUserEmail = localStorage.getItem('loggedInUserEmail');
+
+        // If no logged-in user, show orders with 'guest' email
+        const userEmail = loggedInUserEmail || 'guest';
+
+        // Filter orders to show either the logged-in user's or guest's orders
+        const filteredOrders = savedOrders.filter(
+          (order) => order.customerEmail === userEmail
+        );
+
+        filteredOrders.sort((a, b) => b.id - a.id); // Newest first
+        setOrderHistory(filteredOrders);
       } catch (error) {
         console.error('Failed to load orders from localStorage:', error);
         setOrderHistory([]);

@@ -14,7 +14,7 @@ import beefMealImage from '../assets/pic (2).jpg';
 import veggieMealImage from '../assets/pic (13).jpg';
 import friesImage from '../assets/pic (4).jpg';
 import onionRingsImage from '../assets/pic (0).webp';
-import saladImage from '../assets/pic (2).jpg';
+import saladImage from '../assets/salad.jpg';
 import chocolateShakeImage from '../assets/pic (5).jpg';
 import vanillaShakeImage from '../assets/pic (11).jpg';
 import strawberryShakeImage from '../assets/pic (1).jpg';

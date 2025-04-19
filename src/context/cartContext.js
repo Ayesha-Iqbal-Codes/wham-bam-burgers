@@ -5,16 +5,17 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
-  // Load saved cart items from localStorage
+  // This useEffect only runs once when the component mounts to load saved cart items from localStorage
   useEffect(() => {
     const savedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     setCartItems(savedCartItems);
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
 
-  // Save cart items to localStorage whenever the cartItems state changes
+  // This useEffect runs whenever cartItems changes, to save updated cart items to localStorage
   useEffect(() => {
+    if (cartItems.length === 0) return; // Don't save empty cart to localStorage
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  }, [cartItems]);
+  }, [cartItems]); // Dependency array ensures this runs only when cartItems changes
 
   const addToCart = (item) => {
     setCartItems(prevItems => {
@@ -42,36 +43,52 @@ export const CartProvider = ({ children }) => {
     return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   };
 
-  // New function to update the quantity of an item in the cart
   const updateQuantity = (itemId, change) => {
     setCartItems(prevItems =>
       prevItems.map(item =>
         item.id === itemId
-          ? { ...item, quantity: Math.max(1, item.quantity + change) } // Ensure quantity is always >= 1
+          ? { ...item, quantity: Math.max(1, item.quantity + change) }
           : item
       )
     );
   };
 
-  // Updated placeOrder function to accept customer details
   const placeOrder = (customerName, address, phone, pickupDate) => {
+    const loggedInUserEmail = localStorage.getItem('loggedInUserEmail');
+
+    // Use a default 'guest' email if not logged in
+    const customerEmail = loggedInUserEmail || 'guest';
+
     const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
+
     const newOrder = {
       id: savedOrders.length + 1,
       customerName,
+      customerEmail,
       address,
       phone,
-      pickupDate,
+      pickupTime: pickupDate,
       items: cartItems,
-      status: 'Pending'
+      status: 'Pending',
+      total: getTotal()
     };
-    
+
     localStorage.setItem('orders', JSON.stringify([...savedOrders, newOrder]));
-    clearCart(); // Clear the cart after placing the order
+    clearCart(); // Clear cart after placing order
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart, getTotal, placeOrder, updateQuantity }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        getTotal,
+        placeOrder,
+        updateQuantity
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

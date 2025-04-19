@@ -5,11 +5,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import profilePic from '../assets/profile.png';
 import { useUser } from '../context/userContext';
+import { useCart } from '../context/cartContext'; // ✅ added
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, updateUser } = useUser();
+  const { cartItems } = useCart(); // ✅ added
   const location = useLocation();
 
   useEffect(() => {
@@ -31,6 +33,8 @@ const Navbar = () => {
     localStorage.removeItem('user');
     updateUser(null);
   };
+
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0); // ✅ cart count
 
   return (
     <header className="sticky top-0 bg-gradient-to-r from-black via-red-800 to-red-900 text-white shadow-md z-50">
@@ -70,15 +74,23 @@ const Navbar = () => {
             >
               Menu
             </Link>
+
+            {/* Cart Icon with Badge */}
             <Link
               to="/cart"
               onClick={() => setMenuOpen(false)}
-              className={`hover:text-yellow-300 transition duration-300 ${
+              className={`relative hover:text-yellow-300 transition duration-300 ${
                 location.pathname === '/cart' ? 'text-yellow-300' : ''
               } lg:mt-1`}
             >
               <FontAwesomeIcon icon={faShoppingCart} className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-yellow-300 text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
+
             <Link
               to="/order-history"
               onClick={() => setMenuOpen(false)}
