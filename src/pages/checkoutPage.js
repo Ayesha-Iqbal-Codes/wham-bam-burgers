@@ -1,7 +1,7 @@
 // CheckoutPage.js
 
 import React, { useState } from 'react';
-import Navbar from '../components/navbar'; // Adjust the import path as needed
+import Navbar from '../components/navbar'; 
 
 const CheckoutPage = () => {
   const [address, setAddress] = useState('');
@@ -9,7 +9,7 @@ const CheckoutPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle checkout logic here
+    
     alert('Order placed successfully!');
   };
 

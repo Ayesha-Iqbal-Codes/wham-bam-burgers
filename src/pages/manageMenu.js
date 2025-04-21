@@ -4,8 +4,8 @@ const ManageMenu = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [newItem, setNewItem] = useState({ name: '', description: '', price: '', image: '', category: '' });
   const [editingItem, setEditingItem] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(''); // Default to no category selected
-  const [imageFile, setImageFile] = useState(null); // State to store the selected image file
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [imageFile, setImageFile] = useState(null); 
 
   useEffect(() => {
     const savedMenuItems = JSON.parse(localStorage.getItem('menuItems')) || [];
@@ -75,7 +75,7 @@ const ManageMenu = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="p-6 container mx-auto">
-        {/* Form for Adding/Editing Menu Items */}
+        
         <div className="mb-6 bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">{editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}</h3>
           <input
@@ -122,7 +122,7 @@ const ManageMenu = () => {
           </button>
         </div>
 
-        {/* Category Tabs */}
+     
         <div className="mb-4">
           <div className="flex flex-wrap justify-start space-x-4">
             {categories.map(category => (
@@ -143,7 +143,6 @@ const ManageMenu = () => {
           </div>
         </div>
 
-        {/* Menu Items List */}
         <h1 className="text-4xl font-bold text-center mb-6">Manage Menu Items</h1>
         {categories.map(category => (
           (selectedCategory === '' || selectedCategory === category) && (

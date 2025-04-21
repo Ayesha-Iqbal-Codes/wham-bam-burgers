@@ -74,7 +74,7 @@ const CustomerMenu = () => {
   };
 
   const handleConfirmAddToCart = () => {
-    if (selectedItem) {
+    if (selectedItem && quantity >= 1) {
       addToCart({ ...selectedItem, quantity });
       toast.success(`${quantity} x ${selectedItem.name} added to cart!`);
       setSelectedItem(null);
@@ -143,8 +143,21 @@ const CustomerMenu = () => {
                 <p className="text-lg font-semibold">Quantity:</p>
                 <input
                   type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  min="1"
+                  value={quantity === "" ? "" : quantity}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === "") {
+                      setQuantity("");
+                    } else if (!isNaN(value)) {
+                      setQuantity(parseInt(value));
+                    }
+                  }}
+                  onBlur={() => {
+                    if (!quantity || quantity < 1) {
+                      setQuantity(1);
+                    }
+                  }}
                   className="border p-2 rounded w-full"
                 />
               </div>
@@ -156,7 +169,10 @@ const CustomerMenu = () => {
                   Confirm
                 </button>
                 <button
-                  onClick={() => setSelectedItem(null)}
+                  onClick={() => {
+                    setSelectedItem(null);
+                    setQuantity(1);
+                  }}
                   className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded"
                 >
                   Cancel

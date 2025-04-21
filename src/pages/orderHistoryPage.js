@@ -9,16 +9,13 @@ const OrderHistoryPage = () => {
       try {
         const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
         const loggedInUserEmail = localStorage.getItem('loggedInUserEmail');
+        const userEmail = loggedInUserEmail && loggedInUserEmail !== 'null' ? loggedInUserEmail : 'guest';
 
-        // If no logged-in user, show orders with 'guest' email
-        const userEmail = loggedInUserEmail || 'guest';
-
-        // Filter orders to show either the logged-in user's or guest's orders
         const filteredOrders = savedOrders.filter(
           (order) => order.customerEmail === userEmail
         );
 
-        filteredOrders.sort((a, b) => b.id - a.id); // Newest first
+        filteredOrders.sort((a, b) => b.id - a.id);
         setOrderHistory(filteredOrders);
       } catch (error) {
         console.error('Failed to load orders from localStorage:', error);
@@ -50,7 +47,6 @@ const OrderHistoryPage = () => {
                   <p><strong>Email:</strong> {order.customerEmail || 'N/A'}</p>
                   <p><strong>Phone:</strong> {order.phone || 'N/A'}</p>
                   <p><strong>Address:</strong> {order.address || 'N/A'}</p>
-                  <p><strong>Pickup Date:</strong> {order.pickupTime || 'N/A'}</p>
                   <p><strong>Status:</strong> {order.status || 'Pending'}</p>
                   <p>
                     <strong>Total:</strong> Rs{' '}

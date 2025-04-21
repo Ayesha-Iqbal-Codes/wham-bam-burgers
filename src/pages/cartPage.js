@@ -5,14 +5,12 @@ import { useCart } from '../context/cartContext';
 import { useUser } from '../context/userContext';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
+import { format, toZonedTime } from 'date-fns-tz';
 
 const CartPage = () => {
   const { cartItems, removeFromCart, clearCart, getTotal, placeOrder, updateQuantity } = useCart();
   const { user } = useUser();
   const navigate = useNavigate();
-
 
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
@@ -20,6 +18,7 @@ const CartPage = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const total = getTotal();
+
 
   useEffect(() => {
     const savedAddress = localStorage.getItem('address');
@@ -31,7 +30,7 @@ const CartPage = () => {
     if (savedPickupDate) {
       setPickupDate(savedPickupDate);
     } else {
-      const currentDate = new Date().toISOString().split('T')[0];
+      const currentDate = new Date().toISOString().split('T')[0];  
       setPickupDate(currentDate);
     }
   }, []);
@@ -49,13 +48,18 @@ const CartPage = () => {
       let lastOrderId = parseInt(localStorage.getItem('lastOrderId'), 10) || 0;
       const newOrderId = lastOrderId + 1;
 
+      
+      const timeZone = 'Asia/Karachi';
+      const zonedPickupDate = toZonedTime(pickupDate, timeZone);  
+      const formattedPickupDate = format(zonedPickupDate, 'yyyy-MM-dd', { timeZone });  
+
       const order = {
         id: newOrderId,
         customerName: user.name,
         customerEmail: user.email,
         phone,
         address,
-        pickupTime: pickupDate,
+        pickupTime: formattedPickupDate,  
         items: cartItems,
         status: 'Pending',
       };
@@ -70,13 +74,12 @@ const CartPage = () => {
       localStorage.setItem('phone', phone);
       localStorage.setItem('pickupDate', pickupDate);
 
-      placeOrder(user.name, address, phone, pickupDate);
+      placeOrder(user.name, address, phone, formattedPickupDate);
 
-      // Soft reset the form
+      
       setAddress('');
       setPhone('');
-      const today = new Date().toISOString().split('T')[0];
-      setPickupDate(today);
+      setPickupDate(new Date().toISOString().split('T')[0]);  
 
       localStorage.removeItem('address');
       localStorage.removeItem('phone');
@@ -84,7 +87,6 @@ const CartPage = () => {
 
       clearCart();
 
-      // Show confirmation toast
       toast.success("Order placed successfully! Check the order history to know your order status.");
       setShowConfirmation(true);
       setTimeout(() => setShowConfirmation(false), 4000);
@@ -146,52 +148,42 @@ const CartPage = () => {
               </ul>
               <div className="mt-4">
                 <p className="text-xl font-bold">Total: Rs {total.toFixed(2)}</p>
-                <div className="mt-2">
-                  <p className="text-lg font-semibold">Name: {user ? user.name : 'Not logged in'}</p>
-                  <p className="text-lg font-semibold">Email: {user ? user.email : 'Not logged in'}</p>
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <input
+                      type="text"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Enter delivery address"
+                      className="border p-2 rounded w-full"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Enter phone number"
+                      className="border p-2 rounded w-full"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="date"
+                      value={pickupDate}
+                      onChange={(e) => setPickupDate(e.target.value)}
+                      className="border p-2 rounded w-full"
+                    />
+                  </div>
                 </div>
-                <div className="mt-4">
-                  <input 
-                    type="text" 
-                    placeholder="Enter your address" 
-                    value={address} 
-                    onChange={(e) => setAddress(e.target.value)} 
-                    className="border p-2 rounded w-full mb-2"
-                  />
-                  <input 
-                    type="tel" 
-                    placeholder="Enter your phone number" 
-                    value={phone} 
-                    onChange={(e) => setPhone(e.target.value)} 
-                    className="border p-2 rounded w-full mb-2"
-                  />
-                  <input 
-                    type="date" 
-                    value={pickupDate} 
-                    onChange={(e) => setPickupDate(e.target.value)} 
-                    className="border p-2 rounded w-full"
-                    disabled
-                  />
-                </div>
-                <div className="flex justify-between mt-4">
-                  <button
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={handleCheckout}
-                  >
-                    Checkout
-                  </button>
-                  <button
-                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={clearCart}
-                  >
-                    Clear Cart
-                  </button>
-                </div>
-                {showConfirmation && (
-                  <p className="text-green-600 font-semibold mt-4">
-                    ✅ Your order has been placed successfully!
-                  </p>
-                )}
+              </div>
+              <div className="mt-6">
+                <button
+                  onClick={handleCheckout}
+                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full"
+                >
+                  Proceed to Checkout
+                </button>
               </div>
             </div>
           )}

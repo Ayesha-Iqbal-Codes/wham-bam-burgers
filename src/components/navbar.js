@@ -5,13 +5,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import profilePic from '../assets/profile.png';
 import { useUser } from '../context/userContext';
-import { useCart } from '../context/cartContext'; // ✅ added
+import { useCart } from '../context/cartContext'; 
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, updateUser } = useUser();
-  const { cartItems } = useCart(); // ✅ added
+  const { cartItems } = useCart(); 
   const location = useLocation();
 
   useEffect(() => {
@@ -34,12 +34,12 @@ const Navbar = () => {
     updateUser(null);
   };
 
-  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0); // ✅ cart count
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0); 
 
   return (
     <header className="sticky top-0 bg-gradient-to-r from-black via-red-800 to-red-900 text-white shadow-md z-50">
       <div className="container mx-auto flex justify-between items-center py-2 px-3 sm:px-4 lg:px-6">
-        {/* Logo */}
+       
         <Link to="/" className="flex items-center space-x-2">
           <img
             src={logo}
@@ -51,14 +51,14 @@ const Navbar = () => {
           </h1>
         </Link>
 
-        {/* Hamburger icon */}
+     
         <div className="lg:hidden">
           <button onClick={toggleMobileMenu}>
             <FontAwesomeIcon icon={menuOpen ? faTimes : faBars} className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Navigation */}
+        
         <nav
           className={`${
             menuOpen ? 'block' : 'hidden'
@@ -75,7 +75,7 @@ const Navbar = () => {
               Menu
             </Link>
 
-            {/* Cart Icon with Badge */}
+           
             <Link
               to="/cart"
               onClick={() => setMenuOpen(false)}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Carousel as ResponsiveCarousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
-// Import your video and images
+
 import Video1 from '../assets/burger.mp4';
 import Image3 from '../assets/car.png';
 import Video2 from '../assets/yelle.mp4';
@@ -10,7 +10,7 @@ import Video2 from '../assets/yelle.mp4';
 
 
 const Carousel = () => {
-  // Define the items: video first, then images
+  
   const items = [
     { id: 1, type: 'video', src: Video1 },
     { id: 2, type: 'image', src: Image3 },

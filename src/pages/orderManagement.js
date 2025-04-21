@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { format, toZonedTime } from 'date-fns-tz';  
 
 const formatDate = (dateString) => {
-  const options = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true,
-  };
-  return new Date(dateString).toLocaleDateString(undefined, options);
+  const timeZone = 'Asia/Karachi';  
+  const zonedDate = toZonedTime(dateString, timeZone);  
+  return format(zonedDate, 'yyyy-MM-dd', { timeZone });  
 };
 
 const OrdersManagement = () => {
@@ -68,7 +63,7 @@ const OrdersManagement = () => {
       <h2 className="text-4xl font-bold mb-6 text-[#2C1A15]">Manage Orders</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Active Orders */}
+        
         <div className="bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-2xl font-semibold mb-4 text-[#2C1A15]">Active Orders</h3>
           {activeOrders.length === 0 ? (
@@ -123,7 +118,7 @@ const OrdersManagement = () => {
           <p><strong>Name:</strong> {selectedOrder.customerName}</p>
           <p><strong>Phone:</strong> {selectedOrder.phone}</p>
           <p><strong>Address:</strong> {selectedOrder.address}</p>
-          <p><strong>Pickup Time:</strong> {formatDate(selectedOrder.pickupTime)}</p>
+          <p><strong>Pickup Date:</strong> {formatDate(selectedOrder.pickupTime)}</p>
 
           <div className="overflow-x-auto mt-6">
             <table className="min-w-full border border-gray-300">

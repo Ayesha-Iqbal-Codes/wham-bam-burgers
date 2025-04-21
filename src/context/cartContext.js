@@ -5,17 +5,15 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
-  // This useEffect only runs once when the component mounts to load saved cart items from localStorage
   useEffect(() => {
     const savedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     setCartItems(savedCartItems);
-  }, []); // Empty dependency array ensures this runs only once when the component mounts
+  }, []);
 
-  // This useEffect runs whenever cartItems changes, to save updated cart items to localStorage
   useEffect(() => {
-    if (cartItems.length === 0) return; // Don't save empty cart to localStorage
+    if (cartItems.length === 0) return;
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  }, [cartItems]); // Dependency array ensures this runs only when cartItems changes
+  }, [cartItems]);
 
   const addToCart = (item) => {
     setCartItems(prevItems => {
@@ -53,28 +51,27 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  const placeOrder = (customerName, address, phone, pickupDate) => {
+  const placeOrder = (customerName, address, phone) => {
     const loggedInUserEmail = localStorage.getItem('loggedInUserEmail');
-
-    // Use a default 'guest' email if not logged in
-    const customerEmail = loggedInUserEmail || 'guest';
+    const customerEmail = loggedInUserEmail && loggedInUserEmail !== 'null' ? loggedInUserEmail : 'guest';
 
     const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
 
+    const newOrderId = savedOrders.length > 0 ? savedOrders[savedOrders.length - 1].id + 1 : 1;
+
     const newOrder = {
-      id: savedOrders.length + 1,
+      id: newOrderId,
       customerName,
       customerEmail,
       address,
       phone,
-      pickupTime: pickupDate,
       items: cartItems,
       status: 'Pending',
       total: getTotal()
     };
 
     localStorage.setItem('orders', JSON.stringify([...savedOrders, newOrder]));
-    clearCart(); // Clear cart after placing order
+    clearCart();
   };
 
   return (

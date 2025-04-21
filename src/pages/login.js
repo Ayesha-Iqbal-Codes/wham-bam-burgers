@@ -1,55 +1,53 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.webp'; // Import the logo
+import logo from '../assets/logo.webp';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState(''); // State to track user name
-  const [isAdmin, setIsAdmin] = useState(false); // State to toggle between admin and user
-  const [error, setError] = useState(''); // State to track validation errors
-  const navigate = useNavigate(); // useNavigate hook for navigation
-
+  const [name, setName] = useState(''); 
+  const [isAdmin, setIsAdmin] = useState(false); 
+  const [error, setError] = useState(''); 
+  const navigate = useNavigate(); 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Email validation regex for checking "@" and ".com"
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-    // Admin login check
+   
     if (isAdmin) {
       if (email === 'Admin' && password === 'admin123') {
-        setError(''); // Clear any error messages
+        setError(''); 
         console.log('Admin login successful');
-        navigate('/dashboard'); // Redirect to admin dashboard
+        navigate('/dashboard'); 
       } else {
         setError('Invalid admin credentials');
       }
     } else {
-      // User email validation
+      
       if (!emailPattern.test(email)) {
         setError('Please enter a valid email address with "@" and ".com".');
         return;
       }
 
-      setError(''); // Clear error if email is valid
+      setError(''); 
 
-      // Save the user name and email in local storage
+      
       localStorage.setItem('user', JSON.stringify({ name, email }));
       console.log('User login successful with', { name, email });
-      navigate('/menu'); // Redirect to user menu
+      navigate('/menu'); 
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="max-w-md w-full bg-gray-100 p-8 rounded-lg shadow-md">
-        {/* Logo Section */}
+      
         <div className="flex justify-center mb-6">
           <img src={logo} alt="Wham Bam Burgers Logo" className="w-32 h-auto" />
         </div>
 
-        {/* Toggle between User and Admin login */}
+       
         <div className="flex justify-center mb-4">
           <button
             onClick={() => setIsAdmin(false)}
@@ -65,9 +63,9 @@ const LoginPage = () => {
           </button>
         </div>
 
-        {/* Login Form */}
+       
         <form onSubmit={handleSubmit}>
-          {/* If not admin, show name input */}
+          
           {!isAdmin && (
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -85,7 +83,7 @@ const LoginPage = () => {
             </div>
           )}
 
-          {/* Email or Admin Name Input */}
+          
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
               {isAdmin ? 'Admin Name' : 'Email'}
@@ -99,11 +97,11 @@ const LoginPage = () => {
               className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? 'border-red-500' : ''}`}
               required
             />
-            {/* Display validation error under email input */}
+        
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </div>
 
-          {/* Password Input */}
+          
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
               Password
@@ -119,7 +117,7 @@ const LoginPage = () => {
             />
           </div>
 
-          {/* Login Button */}
+        
           <div className="flex items-center justify-between">
             <button
               type="submit"
