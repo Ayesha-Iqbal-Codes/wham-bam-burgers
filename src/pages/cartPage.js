@@ -19,7 +19,6 @@ const CartPage = () => {
 
   const total = getTotal();
 
-
   useEffect(() => {
     const savedAddress = localStorage.getItem('address');
     const savedPhone = localStorage.getItem('phone');
@@ -30,7 +29,7 @@ const CartPage = () => {
     if (savedPickupDate) {
       setPickupDate(savedPickupDate);
     } else {
-      const currentDate = new Date().toISOString().split('T')[0];  
+      const currentDate = new Date().toISOString().split('T')[0];
       setPickupDate(currentDate);
     }
   }, []);
@@ -48,10 +47,9 @@ const CartPage = () => {
       let lastOrderId = parseInt(localStorage.getItem('lastOrderId'), 10) || 0;
       const newOrderId = lastOrderId + 1;
 
-      
       const timeZone = 'Asia/Karachi';
-      const zonedPickupDate = toZonedTime(pickupDate, timeZone);  
-      const formattedPickupDate = format(zonedPickupDate, 'yyyy-MM-dd', { timeZone });  
+      const zonedPickupDate = toZonedTime(pickupDate, timeZone);
+      const formattedPickupDate = format(zonedPickupDate, 'yyyy-MM-dd', { timeZone });
 
       const order = {
         id: newOrderId,
@@ -59,7 +57,7 @@ const CartPage = () => {
         customerEmail: user.email,
         phone,
         address,
-        pickupTime: formattedPickupDate,  
+        pickupTime: formattedPickupDate,
         items: cartItems,
         status: 'Pending',
       };
@@ -76,10 +74,9 @@ const CartPage = () => {
 
       placeOrder(user.name, address, phone, formattedPickupDate);
 
-      
       setAddress('');
       setPhone('');
-      setPickupDate(new Date().toISOString().split('T')[0]);  
+      setPickupDate(new Date().toISOString().split('T')[0]);
 
       localStorage.removeItem('address');
       localStorage.removeItem('phone');
@@ -113,6 +110,21 @@ const CartPage = () => {
             <p>Your cart is empty.</p>
           ) : (
             <div>
+              {/* User info display */}
+              <div className="mb-4">
+                {user ? (
+                  <div>
+                    <p className="font-semibold">Name:</p>
+                    <p>{user.name}</p>
+                    <p className="font-semibold mt-2">Email:</p>
+                    <p>{user.email}</p>
+                  </div>
+                ) : (
+                  <p className="text-red-600">Please log in to continue.</p>
+                )}
+              </div>
+
+              {/* Cart items */}
               <ul>
                 {cartItems.map((item) => (
                   <li key={item.id} className="border-b py-2 flex justify-between items-center">
@@ -146,6 +158,7 @@ const CartPage = () => {
                   </li>
                 ))}
               </ul>
+
               <div className="mt-4">
                 <p className="text-xl font-bold">Total: Rs {total.toFixed(2)}</p>
                 <div className="mt-4 space-y-3">
@@ -160,9 +173,14 @@ const CartPage = () => {
                   </div>
                   <div>
                     <input
-                      type="text"
+                      type="tel"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (/^\d*$/.test(val)) setPhone(val);
+                      }}
                       placeholder="Enter phone number"
                       className="border p-2 rounded w-full"
                     />
@@ -177,10 +195,14 @@ const CartPage = () => {
                   </div>
                 </div>
               </div>
+
               <div className="mt-6">
                 <button
                   onClick={handleCheckout}
-                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full"
+                  disabled={!user}
+                  className={`${
+                    !user ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+                  } text-white font-bold py-2 px-4 rounded w-full`}
                 >
                   Proceed to Checkout
                 </button>
