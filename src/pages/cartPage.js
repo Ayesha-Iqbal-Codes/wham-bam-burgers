@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { format, toZonedTime } from 'date-fns-tz';
 
 const CartPage = () => {
-  const { cartItems, removeFromCart, clearCart, getTotal, placeOrder, updateQuantity } = useCart();
+  const { cartItems, removeFromCart, clearCart, getTotal, updateQuantity } = useCart();
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -60,20 +60,25 @@ const CartPage = () => {
         pickupTime: formattedPickupDate,
         items: cartItems,
         status: 'Pending',
+        total: total,
       };
 
       const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
-      const filteredOrders = savedOrders.filter(existingOrder => existingOrder.id !== order.id);
-      filteredOrders.push(order);
+      savedOrders.push(order);
 
-      localStorage.setItem('orders', JSON.stringify(filteredOrders));
+      localStorage.setItem('orders', JSON.stringify(savedOrders));
       localStorage.setItem('lastOrderId', newOrderId);
       localStorage.setItem('address', address);
       localStorage.setItem('phone', phone);
       localStorage.setItem('pickupDate', pickupDate);
 
-      placeOrder(user.name, address, phone, formattedPickupDate);
+      clearCart();
 
+      toast.success("Order placed successfully! Check the order history to know your order status.");
+      setShowConfirmation(true);
+      setTimeout(() => setShowConfirmation(false), 4000);
+
+      // Clear user details in the cart
       setAddress('');
       setPhone('');
       setPickupDate(new Date().toISOString().split('T')[0]);
@@ -81,12 +86,6 @@ const CartPage = () => {
       localStorage.removeItem('address');
       localStorage.removeItem('phone');
       localStorage.removeItem('pickupDate');
-
-      clearCart();
-
-      toast.success("Order placed successfully! Check the order history to know your order status.");
-      setShowConfirmation(true);
-      setTimeout(() => setShowConfirmation(false), 4000);
     } else {
       toast.error("Please fill in all details to place the order.");
     }

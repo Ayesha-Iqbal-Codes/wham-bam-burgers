@@ -51,29 +51,6 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  const placeOrder = (customerName, address, phone) => {
-    const loggedInUserEmail = localStorage.getItem('loggedInUserEmail');
-    const customerEmail = loggedInUserEmail && loggedInUserEmail !== 'null' ? loggedInUserEmail : 'guest';
-
-    const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
-
-    const newOrderId = savedOrders.length > 0 ? savedOrders[savedOrders.length - 1].id + 1 : 1;
-
-    const newOrder = {
-      id: newOrderId,
-      customerName,
-      customerEmail,
-      address,
-      phone,
-      items: cartItems,
-      status: 'Pending',
-      total: getTotal()
-    };
-
-    localStorage.setItem('orders', JSON.stringify([...savedOrders, newOrder]));
-    clearCart();
-  };
-
   return (
     <CartContext.Provider
       value={{
@@ -82,7 +59,6 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         clearCart,
         getTotal,
-        placeOrder,
         updateQuantity
       }}
     >
