@@ -9,12 +9,12 @@ const LoginPage = () => {
   const [isAdmin, setIsAdmin] = useState(false); 
   const [error, setError] = useState(''); 
   const navigate = useNavigate(); 
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-   
     if (isAdmin) {
       if (email === 'Admin' && password === 'admin123') {
         setError(''); 
@@ -24,15 +24,12 @@ const LoginPage = () => {
         setError('Invalid admin credentials');
       }
     } else {
-      
       if (!emailPattern.test(email)) {
         setError('Please enter a valid email address with "@" and ".com".');
         return;
       }
 
       setError(''); 
-
-      
       localStorage.setItem('user', JSON.stringify({ name, email }));
       console.log('User login successful with', { name, email });
       navigate('/menu'); 
@@ -42,12 +39,11 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="max-w-md w-full bg-gray-100 p-8 rounded-lg shadow-md">
-      
+
         <div className="flex justify-center mb-6">
           <img src={logo} alt="Wham Bam Burgers Logo" className="w-32 h-auto" />
         </div>
 
-       
         <div className="flex justify-center mb-4">
           <button
             onClick={() => setIsAdmin(false)}
@@ -63,9 +59,16 @@ const LoginPage = () => {
           </button>
         </div>
 
-       
+        {/* Show admin credentials note only when admin tab is active */}
+        {isAdmin && (
+          <div className="text-center mb-4 text-sm text-gray-600">
+            <p>
+              <strong>Demo Admin Login:</strong> Username: <code>Admin</code>, Password: <code>admin123</code>
+            </p>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
-          
           {!isAdmin && (
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -83,7 +86,6 @@ const LoginPage = () => {
             </div>
           )}
 
-          
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
               {isAdmin ? 'Admin Name' : 'Email'}
@@ -97,11 +99,9 @@ const LoginPage = () => {
               className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? 'border-red-500' : ''}`}
               required
             />
-        
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </div>
 
-          
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
               Password
@@ -117,7 +117,6 @@ const LoginPage = () => {
             />
           </div>
 
-        
           <div className="flex items-center justify-between">
             <button
               type="submit"
